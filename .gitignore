@@ -45,3 +45,18 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+out
+lib
+.ensime
+.ensime_lucene
+.idea
+.project
+.settings
+.worksheet
+build.sbt
+target
+.classpath
+fomalhaut.iml
+.cache-main
+.cache-tests
