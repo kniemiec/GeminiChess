@@ -1,7 +1,7 @@
 package test.fomalhaut.pieces
 
 import fomalhaut.{Move,BoardSpecialEvents}
-import fomalhaut.pieces.Pawn
+import fomalhaut.pieces.{BlackPawn, Pawn}
 
 import org.scalatest.FlatSpec
 
@@ -40,25 +40,25 @@ class PawnTest  extends FlatSpec{
   }  
 
   "black pawn from e3  " should " attack fields d2 and f2 " in {
-    val pawn = new Pawn(List(20), new BoardSpecialEvents(1,true,true,true,true,0))
+    val pawn = new BlackPawn(List(20), new BoardSpecialEvents(1,true,true,true,true,0))
     assert(pawn.getAttackedFields(20,Nil,Nil).sorted == List( 11,13).sorted)
     //assert(board.whitePiecesPosition == List(new Queen(List(3))))    
   }    
 
     "black pawn from e3  " should " go to  e2 and attack d2 and f2 " in {
-    val pawn = new Pawn(List(20), new BoardSpecialEvents(1,true,true,true,true,0))
+    val pawn = new BlackPawn(List(20), new BoardSpecialEvents(1,true,true,true,true,0))
     assert(pawn.getAllMoves(20,List(11,13),Nil).map((m:Move) => m.to).sorted == List( 12,11,13).sorted)
     //assert(board.whitePiecesPosition == List(new Queen(List(3))))    
   }   
   
   "black pawn from e2  " should " go to field e1 " in {
-    val pawn = new Pawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
+    val pawn = new BlackPawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
     assert(pawn.getAllMoves(12,Nil,Nil).map((m:Move) => m.to).sorted == List( 4,4,4,4).sorted)
     //assert(board.whitePiecesPosition == List(new Queen(List(3))))    
   }    
   
   "black pawn from e2  " should " attack and go  to field d1, f1 and e1 " in {
-    val pawn = new Pawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
+    val pawn = new BlackPawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
     assert(pawn.getAllMoves(12,List(3,5),Nil).map((m: Move) => m.to).sorted == List( 4,4,4,4,3,3,3,3,5,5,5,5).sorted)
     //assert(board.whitePiecesPosition == List(new Queen(List(3))))    
   }
@@ -73,14 +73,19 @@ class PawnTest  extends FlatSpec{
     assert(pawn.getAttackedFields(15,Nil,Nil) == List( 22))
   }
 
+  "white pawn from b7  " should " attack to fields a8" in {
+    val pawn = new Pawn(List(49), new BoardSpecialEvents(0,true,true,true,true,0))
+    assert(pawn.getAttackedFields(49,Nil,Nil) == List( 56,58))
+  }
+
   "black pawn from a3  " should " attack only b2" in {
-    val pawn = new Pawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
+    val pawn = new BlackPawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
     assert(pawn.getAttackedFields(16,Nil,Nil).sorted == List( 9).sorted)
     //assert(board.whitePiecesPosition == List(new Queen(List(3))))
   }
 
   "black pawn from h3  " should " attack only g2 " in {
-    val pawn = new Pawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
+    val pawn = new BlackPawn(List(12), new BoardSpecialEvents(1,true,true,true,true,0))
     assert(pawn.getAttackedFields(23,Nil,Nil).sorted == List( 14).sorted)
     //assert(board.whitePiecesPosition == List(new Queen(List(3))))
   }

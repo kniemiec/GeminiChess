@@ -17,7 +17,7 @@ class FENParserTest extends FlatSpec{
     printListofInt(board.fieldsOccupiedByBlack)
     
     
-    printList(board.getAllWhiteMoves().reduce(_ ::: _))
+    printList(board.getAllWhiteMoves().flatten)
   }
   
   

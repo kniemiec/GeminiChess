@@ -8,14 +8,15 @@ import fomalhaut.{Board, BoardSpecialEvents}
 
 class FENParser {
   
-  val whiteSymbols = "KQRBNP"
-  val blackSymbols = "kqrbnp"
+  val whiteSymbols = "KQRBNP_"
+  val blackSymbols = "kqrbn_p"
 
     var whitePieces: List[Piece] = Nil
     var blackPieces: List[Piece] = Nil
   var globalContext: BoardSpecialEvents = new BoardSpecialEvents(0,true,true,true,true,0)
 
-    val REDUCE_PATTERN = List( PieceType.QEEN,PieceType.KING,PieceType.ROOK,PieceType.BISHOP,PieceType.KNIGHT,PieceType.PAWN)
+    val WHITE_REDUCE_PATTERN = List( PieceType.QEEN,PieceType.KING,PieceType.ROOK,PieceType.BISHOP,PieceType.KNIGHT,PieceType.PAWN)
+    val BLACK_REDUCE_PATTERN = List( PieceType.QEEN,PieceType.KING,PieceType.ROOK,PieceType.BISHOP,PieceType.KNIGHT,PieceType.BLACK_PAWN)
     var boardRow  = 7
     var boardCol = 0
 
@@ -32,8 +33,8 @@ class FENParser {
 //    whitePieces =
     
     val whiteOnMove = calculateWhiteOnMove(piecesPosition(1))
-    new Board(REDUCE_PATTERN.map(filterPiecesByType(_,whitePieces)),
-              REDUCE_PATTERN.map(filterPiecesByType(_,blackPieces)),
+    new Board(WHITE_REDUCE_PATTERN.map(filterPiecesByType(_,whitePieces)),
+              BLACK_REDUCE_PATTERN.map(filterPiecesByType(_,blackPieces)),
               boardContext)
   }
 
@@ -44,6 +45,7 @@ class FENParser {
     case Bishop(positions,context) => new Bishop(p1.getPositions() ::: p2.getPositions(),globalContext)
     case Knight(positions,context) => new Knight(p1.getPositions() ::: p2.getPositions(),globalContext)
     case Pawn(positions,context) => new Pawn(p1.getPositions() ::: p2.getPositions(),globalContext)
+    case BlackPawn(positions,context) => new BlackPawn(p1.getPositions() ::: p2.getPositions(),globalContext)
   }
 
 
@@ -54,7 +56,7 @@ class FENParser {
   
   def initializeEmptyBoard(context: BoardSpecialEvents) = {
     whitePieces = List( Queen(List(),context),King(List(),context),Rook(List(),context),Bishop(List(),context),Knight(List(),context),Pawn(List(),context))
-    blackPieces = List( Queen(List(),context),King(List(),context),Rook(List(),context),Bishop(List(),context),Knight(List(),context),Pawn(List(),context))
+    blackPieces = List( Queen(List(),context),King(List(),context),Rook(List(),context),Bishop(List(),context),Knight(List(),context),BlackPawn(List(),context))
   }
   
   def calculateContext(onMove: String,castlingS: String, enpassant: String): BoardSpecialEvents = {
@@ -107,6 +109,7 @@ class FENParser {
       case 3 => new Bishop(List(boardIndex),context)
       case 4 => new Knight(List(boardIndex),context)
       case 5 => new Pawn(List(boardIndex),context)
+      case 6 => new BlackPawn(List(boardIndex),context)
     }
   }
   

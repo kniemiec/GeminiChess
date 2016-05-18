@@ -6,7 +6,7 @@ import fomalhaut.{BoardSpecialEvents, Move}
 /**
  * Created by kniemiec on 10.03.16.
  */
-case class Pawn(mPositions: List[Int], boardSpecialEvents: BoardSpecialEvents) extends Piece {
+case class BlackPawn(mPositions: List[Int], boardSpecialEvents: BoardSpecialEvents) extends Piece {
 
 //  BoardTestHelper.printListofInt(mPositions)
 
@@ -56,22 +56,12 @@ case class Pawn(mPositions: List[Int], boardSpecialEvents: BoardSpecialEvents) e
   }
 
   override def getPieceType(): PieceType = {
-    PieceType.PAWN
+    PieceType.BLACK_PAWN
   }
 
 
 
   override def getPieceCode(): Int = 80
-
-//  override def old_getAttackedFields(from: Int, occupiedByEnemy: List[Int], occupiedByOwn: List[Int]): List[Int] = {
-//    val dynamicMovePattern: List[Int] = getDynamicMovePattern(from / 8)
-//    val listOfAttackedMoves = getNormalMoves(from,occupiedByEnemy,occupiedByOwn,dynamicMovePattern) :::
-//      getLeftAttack(from,occupiedByEnemy) :::
-//      getRightAttack(from,occupiedByEnemy)
-//
-//    if(listOfAttackedMoves.nonEmpty) listOfAttackedMoves.map(popuplateWithPromotionMoves(_)).reduceLeft((A:List[Int],B:List[Int])=>(A ::: B))
-//    else Nil
-//  }
 
   override def getAttackedFields(from: Int, occupiedByEnemy: List[Int], occupiedByOwn: List[Int]): List[Int] = {
     List(calculateMove(from,getLeftAttackPattern()),calculateMove(from,getRightAttackPattern())).
@@ -140,11 +130,11 @@ case class Pawn(mPositions: List[Int], boardSpecialEvents: BoardSpecialEvents) e
   }
 
   private def getRightAttackPattern(): Int = {
-      WHITE_ATTACK_RIGHT
+      BLACK_ATTACK_RIGHT
   }
 
   private def getLeftAttackPattern(): Int = {
-      WHITE_ATTACK_LEFT
+      BLACK_ATTACK_LEFT
   }
 
   def getNormalMoves(from: Int,occupiedByEnemy: List[Int], occupiedByOwn: List[Int], movesList: List[Int]): List[Int] = {

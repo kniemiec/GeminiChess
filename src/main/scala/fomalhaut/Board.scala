@@ -5,7 +5,8 @@ import fomalhaut.pieces._
 
 
 class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: BoardSpecialEvents) {
-  
+
+
   val whitePiecesPosition: List[Piece] = white 
   val blackPiecesPosition: List[Piece] = black
   
@@ -29,9 +30,9 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
       (piece: Piece) => {
         piece.positions.map{
           position => piece.getAttackedFields(position,fieldsOccupiedByBlack,fieldsOccupiedByWhite)
-        }
+        }.flatten
       }
-    }.reduce(_ ::: _).reduce(_ ::: _)
+    }.flatten
   }
 
   def generateFieldsAttackedByBlack(): List[Int] = {
@@ -39,9 +40,9 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
       (piece: Piece) => {
         piece.positions.map{
           position => piece.getAttackedFields(position,fieldsOccupiedByWhite,fieldsOccupiedByBlack)
-        }
+        }.flatten
       }
-    }.reduce(_ ::: _).reduce(_ ::: _)
+    }.flatten
   }
 
   def getBoardAfterMove(move: Move): Board = {
@@ -83,7 +84,7 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
     } else if(isEnPassantMove(move)){
       if(boardSpecialEvents.getColorToMove() == 0){
         val white: List[Piece] = movePieces(whitePiecesPosition,move,newBoardContext)
-        val black: List[Piece] = removePieces(blackPiecesPosition,new Move(move.to,move.to-8,PieceType.PAWN,PieceType.PAWN),newBoardContext)     
+        val black: List[Piece] = removePieces(blackPiecesPosition,new Move(move.to,move.to-8,PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),newBoardContext)     
         new Board(white,black,newBoardContext)
       } else {
         val white: List[Piece] = removePieces(whitePiecesPosition,new Move(move.to,move.to+8,PieceType.PAWN,PieceType.PAWN),newBoardContext)
@@ -92,8 +93,8 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
       }      
     } else {
       if(boardSpecialEvents.getColorToMove() == 0){
+        val black: List[Piece] = removePieces(blackPiecesPosition,move,newBoardContext)
         val white: List[Piece] = movePieces(whitePiecesPosition,move,newBoardContext)
-        val black: List[Piece] = removePieces(blackPiecesPosition,move,newBoardContext)     
         new Board(white,black,newBoardContext)
       } else {
         val white: List[Piece] = removePieces(whitePiecesPosition,move,newBoardContext)
@@ -113,11 +114,13 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
   
   
   private def isPawnPromotionMove(move: Move):Boolean = {
-    move.who == PieceType.PAWN && (move.to / 8 == 0 || move.to / 8 == 7)
+    (move.who == PieceType.BLACK_PAWN && move.to / 8 == 0) || 
+      (move.who == PieceType.PAWN && move.to / 8 == 7)
   }
   
   private def isEnPassantMove(move: Move): Boolean = {
-    move.who == PieceType.PAWN && !((fieldsOccupiedByBlack ::: fieldsOccupiedByWhite).contains(move.to))
+    (move.who == PieceType.BLACK_PAWN && !((fieldsOccupiedByBlack ::: fieldsOccupiedByWhite).contains(move.to))) || 
+    (move.who == PieceType.PAWN && !((fieldsOccupiedByBlack ::: fieldsOccupiedByWhite).contains(move.to)))
   }
   
   def generateAllReachableBoards(): List[Board] = {
@@ -158,6 +161,7 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
     case Knight(list,context) => new Knight(newPositions,boardContext)
     case King(list,context) => new King(newPositions,boardContext)
     case Pawn(list,context) => new Pawn(newPositions,boardContext)
+    case BlackPawn(list,context) => new BlackPawn(newPositions,boardContext)
   }  
   
   private def removePiece(piece: Piece, move: Move, boardContext: BoardSpecialEvents): Piece = piece match {
@@ -167,6 +171,7 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
     case Bishop(list,context) => new Bishop(piece.getPositions().filter(_ != move.to),boardContext)
     case Knight(list,context) => new Knight(piece.getPositions().filter(_ != move.to),boardContext)
     case Pawn(list,context) => new Pawn(piece.getPositions().filter(_ != move.to),boardContext)
+    case BlackPawn(list,context) => new BlackPawn(piece.getPositions().filter(_ != move.to),boardContext)
   }
   
   
@@ -176,19 +181,20 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
     case King(list,context) => new King(
                   piece.positions.map((from: Int) => if(from == move.from) move.to else from),boardContext)
     case Rook(list,context) => new Rook(
-                  piece.positions.map((from: Int) => if(from == move.from) move.to else from),boardContext)
+                  piece.getPositions().map((from: Int) => if(from == move.from) move.to else from),boardContext)
     case Bishop(list,context) => new Bishop(
                   piece.positions.map((from: Int) => if(from == move.from) move.to else from),boardContext)
     case Knight(list,context) => new Knight(
                   piece.positions.map((from: Int) => if(from == move.from) move.to else from),boardContext)
     case Pawn(list,context) => new Pawn(
                   piece.getPositions().map((from: Int) => {if(from == move.from) move.to else from}),boardContext)
+    case BlackPawn(list,context) => new BlackPawn(
+                  piece.getPositions().map((from: Int) => {if(from == move.from) move.to else from}),boardContext)
   }
   
   def calculateOccupiedFields(piecesList: List[Piece]) : List[Int] =  {
     var result: List[Int] = List()
     for(pieceType <- piecesList){
-     // println(pieceType.positions.toList)
       result = result ::: pieceType.positions.toList  
     }
     result
@@ -199,19 +205,48 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
     case head :: tail => if(head == move.from) move.to :: tail else head :: prepareNewList(tail, move)
   }
 
-  def getAllWhiteMoves(): List[List[Move]] = {
-    val result  = whitePiecesPosition.map{
-      (piece: Piece) => {
-         piece.positions.map{
-           position => piece.getAllMoves(position,fieldsOccupiedByBlack,fieldsOccupiedByWhite,fieldsAttackedByBlack)
-         } 
-      }
+  def isKingMated(): Boolean = {
+    if(boardSpecialEvents.colorToMove == 0){
+      isBlackKingAttacked()
+    } else {
+      isWhiteKingAttacked()
     }
-    if(result.isEmpty) Nil 
-    else result.reduce(_ ::: _)
+  }
+
+  def isWhiteKingAttacked(): Boolean = {
+    val kingPosition : List[Piece] =
+      for { whitePiece <- whitePiecesPosition if (whitePiece.getPieceType() == PieceType.KING)}
+       yield whitePiece
+
+    val position: Int = kingPosition.head.getPositions().head
+    fieldsAttackedByBlack.contains(position)
+  }
+  
+  def isBlackKingAttacked(): Boolean = {
+    val kingPosition : List[Piece] =
+      for { piece <- blackPiecesPosition if (piece.getPieceType() == PieceType.KING)}
+        yield piece
+    val position: Int = kingPosition.head.getPositions().head
+    fieldsAttackedByWhite.contains(position)
+  }
+  
+  def getAllWhiteMoves(): List[List[Move]] = {
+    if(isBlackKingAttacked()) Nil
+    else {
+      val result = whitePiecesPosition.map {
+        (piece: Piece) => {
+          piece.positions.map {
+            position => piece.getAllMoves(position, fieldsOccupiedByBlack, fieldsOccupiedByWhite, fieldsAttackedByBlack)
+          }
+        }
+      }
+      if (result.isEmpty) Nil
+      else result.flatten
+    }
   }
   
   def getAllBlackMoves(): List[List[Move]] = {
+    if(isWhiteKingAttacked()) Nil
     val result  = blackPiecesPosition.map{
       (piece: Piece) => {
          piece.positions.map{
@@ -219,19 +254,19 @@ class Board (white: List[Piece], black: List[Piece], var boardSpecialEvents: Boa
          } 
       }
     }
-    if(result.isEmpty) Nil 
-    else result.reduce(_ ::: _)    
+    if(result.isEmpty) Nil
+    else result.flatten
   }
   
   def getAllMoves(): List[Move] = {
     if(boardSpecialEvents.getColorToMove() == 0){
       val allWhiteMoves =  getAllWhiteMoves()
-      if(allWhiteMoves.isEmpty) List()
-      else allWhiteMoves.reduce(_ ::: _)
+      if(allWhiteMoves == Nil || allWhiteMoves.isEmpty) List[Move]()
+      else allWhiteMoves.flatten
     } else {
       val allBlackMoves = getAllBlackMoves()
-        if(allBlackMoves.isEmpty) List()
-          else allBlackMoves.reduce(_ ::: _)
+        if(allBlackMoves == Nil || allBlackMoves.isEmpty) List[Move]()
+          else allBlackMoves.flatten
     } 
   }
 

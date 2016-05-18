@@ -40,4 +40,8 @@ object MoveLogger {
     }
     println(moveValue)
   }
+  
+  def printPathEvaluation(moveList: List[Move], moveValue : Int) = {
+    moveList.foreach{ (move: Move ) => print(convertToMove(move))}
+  }  
 }

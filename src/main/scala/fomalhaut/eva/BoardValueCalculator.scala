@@ -1,7 +1,7 @@
 package fomalhaut.eva
 
 import fomalhaut.Board
-import fomalhaut.pieces.{PieceType, Pawn, Piece}
+import fomalhaut.pieces.{PieceType, Pawn, BlackPawn, Piece}
 import fomalhaut.pieces.King
 
 object BoardValueCalculator {
@@ -44,7 +44,7 @@ object BoardValueCalculator {
     val black: List[Piece] = board.getBlackPiecesPosition()
     
      white.filter((piece: Piece) => piece.isInstanceOf[Pawn] ).map(calculatePawnAdvancementValue(_,0)).reduce(_ + _) - 
-       black.filter((piece: Piece) => piece.isInstanceOf[Pawn] ).map(calculatePawnAdvancementValue(_,1)).reduce(_ + _)
+       black.filter((piece: Piece) => piece.isInstanceOf[BlackPawn] ).map(calculatePawnAdvancementValue(_,1)).reduce(_ + _)
   }
 
 

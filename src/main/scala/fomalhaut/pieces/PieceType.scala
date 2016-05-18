@@ -5,6 +5,6 @@ package fomalhaut.pieces
  */
 object PieceType extends Enumeration {
   type PieceType  = Value
-  val KING, QEEN, ROOK, BISHOP, KNIGHT, PAWN, ANY = Value
+  val KING, QEEN, ROOK, BISHOP, KNIGHT, PAWN, BLACK_PAWN, ANY = Value
 
 }

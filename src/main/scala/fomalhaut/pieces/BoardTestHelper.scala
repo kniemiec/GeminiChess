@@ -75,5 +75,6 @@ object BoardTestHelper {
       case PieceType.BISHOP => new Bishop(piece.getPositions(),context)
       case PieceType.KNIGHT => new Knight(piece.getPositions(),context)
       case PieceType.PAWN => new Pawn(piece.getPositions(),context)
+      case PieceType.BLACK_PAWN => new BlackPawn(piece.getPositions(),context)
   }
 }

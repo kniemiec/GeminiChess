@@ -1,5 +1,7 @@
 package test.fomalhaut
 
+import fomalhaut.controller.BoardTextRepresentation
+import fomalhaut.eva.MoveEvaluator
 import fomalhaut.helper.FENParser
 import fomalhaut.pieces._
 import fomalhaut.{BoardSpecialEvents, Board, Move}
@@ -66,22 +68,22 @@ class BoardTest extends FlatSpec{
       )     
       
   val INITIAL_BOARD_BLACK_MOVES = List(
-      new Move(48,40, PieceType.PAWN,PieceType.PAWN),
-      new Move(48,32, PieceType.PAWN,PieceType.PAWN),
-      new Move(49,41, PieceType.PAWN,PieceType.PAWN),
-      new Move(49,33, PieceType.PAWN,PieceType.PAWN),
-      new Move(50,42, PieceType.PAWN,PieceType.PAWN),
-      new Move(50,34, PieceType.PAWN,PieceType.PAWN),
-      new Move(51,43, PieceType.PAWN,PieceType.PAWN),
-      new Move(51,35, PieceType.PAWN,PieceType.PAWN),
-      new Move(52,44, PieceType.PAWN,PieceType.PAWN),
-      new Move(52,36, PieceType.PAWN,PieceType.PAWN),
-      new Move(53,45, PieceType.PAWN,PieceType.PAWN),
-      new Move(53,37, PieceType.PAWN,PieceType.PAWN),
-      new Move(54,46, PieceType.PAWN,PieceType.PAWN),
-      new Move(54,38, PieceType.PAWN,PieceType.PAWN),
-      new Move(55,47, PieceType.PAWN,PieceType.PAWN),
-      new Move(55,39, PieceType.PAWN,PieceType.PAWN),
+      new Move(48,40, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(48,32, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(49,41, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(49,33, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(50,42, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(50,34, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(51,43, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(51,35, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(52,44, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(52,36, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(53,45, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(53,37, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(54,46, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(54,38, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(55,47, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+      new Move(55,39, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
       new Move(57,40, PieceType.KNIGHT,PieceType.KNIGHT),
       new Move(57,42, PieceType.KNIGHT,PieceType.KNIGHT),
       new Move(62,47, PieceType.KNIGHT,PieceType.KNIGHT),
@@ -157,7 +159,6 @@ class BoardTest extends FlatSpec{
        new Move(5,14,PieceType.BISHOP,PieceType.BISHOP),
        new Move(5,23,PieceType.BISHOP,PieceType.BISHOP),
        new Move(4,12,PieceType.KING,PieceType.KING),
-       new Move(4,11,PieceType.KING,PieceType.KING),
        new Move(4,13,PieceType.KING,PieceType.KING),
        new Move(3,11,PieceType.QEEN,PieceType.QEEN),
        new Move(3,19,PieceType.QEEN,PieceType.QEEN),
@@ -212,7 +213,6 @@ class BoardTest extends FlatSpec{
        new Move(61,16,PieceType.BISHOP,PieceType.BISHOP),
        new Move(60,52,PieceType.KING,PieceType.KING),
        new Move(60,53,PieceType.KING,PieceType.KING),
-       new Move(60,51,PieceType.KING,PieceType.KING),
        new Move(59,11,PieceType.QEEN,PieceType.QEEN),
        new Move(59,19,PieceType.QEEN,PieceType.QEEN),
        new Move(59,27,PieceType.QEEN,PieceType.QEEN),
@@ -227,7 +227,23 @@ class BoardTest extends FlatSpec{
        new Move(59,45,PieceType.QEEN,PieceType.QEEN),
        new Move(59,38,PieceType.QEEN,PieceType.QEEN),
        new Move(59,31,PieceType.QEEN,PieceType.QEEN)
-    )         
+    )
+
+  val WHITE_SHORT_CASTLING_AND_ROOK_AND_R_PAWNS = List(
+    new Move(0,1,PieceType.ROOK,PieceType.ROOK),
+    new Move(0,2,PieceType.ROOK,PieceType.ROOK),
+    new Move(0,3,PieceType.ROOK,PieceType.ROOK),
+    new Move(7,6,PieceType.ROOK,PieceType.ROOK),
+    new Move(7,5,PieceType.ROOK,PieceType.ROOK),
+    new Move(8,16, PieceType.PAWN,PieceType.PAWN),
+    new Move(15,23, PieceType.PAWN,PieceType.PAWN),
+    new Move(8,24, PieceType.PAWN,PieceType.PAWN),
+    new Move(15,31, PieceType.PAWN,PieceType.PAWN),
+    new Move(4,6,PieceType.KING,PieceType.KING),
+    new Move(4,5,PieceType.KING,PieceType.KING),
+    new Move(4,12,PieceType.KING,PieceType.KING),
+    new Move(4,13,PieceType.KING,PieceType.KING)
+  )
    
    val WHITE_CASTLING_AND_ROOK_AND_R_PAWNS = List(
        new Move(0,1,PieceType.ROOK,PieceType.ROOK),
@@ -302,10 +318,10 @@ class BoardTest extends FlatSpec{
        new Move(56,59,PieceType.ROOK,PieceType.ROOK),
        new Move(63,62,PieceType.ROOK,PieceType.ROOK),
        new Move(63,61,PieceType.ROOK,PieceType.ROOK),
-       new Move(48,40, PieceType.PAWN,PieceType.PAWN),
-       new Move(48,32, PieceType.PAWN,PieceType.PAWN),
-       new Move(55,47, PieceType.PAWN,PieceType.PAWN),
-       new Move(55,39, PieceType.PAWN,PieceType.PAWN),
+       new Move(48,40, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(48,32, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(55,47, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(55,39, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
        new Move(60,61,PieceType.KING,PieceType.KING),
        new Move(60,59,PieceType.KING,PieceType.KING),
        new Move(60,52,PieceType.KING,PieceType.KING),
@@ -382,20 +398,20 @@ class BoardTest extends FlatSpec{
    )
    
    val CLOSE_ARMIES_BLACK = List(
-       new Move(32,25, PieceType.PAWN,PieceType.PAWN),
-       new Move(33,24, PieceType.PAWN,PieceType.PAWN),
-       new Move(33,26, PieceType.PAWN,PieceType.PAWN),
-       new Move(34,25, PieceType.PAWN,PieceType.PAWN),
-       new Move(34,27, PieceType.PAWN,PieceType.PAWN),
-       new Move(35,26, PieceType.PAWN,PieceType.PAWN),
-       new Move(35,28, PieceType.PAWN,PieceType.PAWN),
-       new Move(36,27, PieceType.PAWN,PieceType.PAWN),
-       new Move(36,29, PieceType.PAWN,PieceType.PAWN),
-       new Move(37,28, PieceType.PAWN,PieceType.PAWN),
-       new Move(37,30, PieceType.PAWN,PieceType.PAWN),
-       new Move(38,29, PieceType.PAWN,PieceType.PAWN),
-       new Move(38,31, PieceType.PAWN,PieceType.PAWN),
-       new Move(39,30, PieceType.PAWN,PieceType.PAWN),       
+       new Move(32,25, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(33,24, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(33,26, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(34,25, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(34,27, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(35,26, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(35,28, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(36,27, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(36,29, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(37,28, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(37,30, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(38,29, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(38,31, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
+       new Move(39,30, PieceType.BLACK_PAWN,PieceType.BLACK_PAWN),
        new Move(41,24, PieceType.KNIGHT,PieceType.KNIGHT),       
        new Move(41,26, PieceType.KNIGHT,PieceType.KNIGHT),
        new Move(41,56, PieceType.KNIGHT,PieceType.KNIGHT),
@@ -428,7 +444,7 @@ class BoardTest extends FlatSpec{
        new Move(45,54,PieceType.BISHOP,PieceType.BISHOP),
        new Move(45,63,PieceType.BISHOP,PieceType.BISHOP)       
    )
-    
+
  "An initial position " should " give such list of Moves" in {
     val board: Board = new FENParser().parseFENDescriptiontToBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq 43 0 1")
     assert(BoardTestHelper.compareUnnormalizedLists(board.getAllMoves() ,INITIAL_BOARD_WHITE_MOVES))
@@ -463,7 +479,7 @@ class BoardTest extends FlatSpec{
 
     "A board with close armies " should " give such list of moves for black" in {
     val board: Board = new FENParser().parseFENDescriptiontToBoard("8/8/rnbqkbnr/pppppppp/PPPPPPPP/RNBQKBNR/8/8 b - - 0 1")
-    BoardTestHelper.printList(board.getAllMoves())
+//    BoardTestHelper.printList(board.getAllMoves())
     assert(BoardTestHelper.compareUnnormalizedLists(board.getAllMoves() ,CLOSE_ARMIES_BLACK))
    }
 
@@ -481,7 +497,7 @@ class BoardTest extends FlatSpec{
 
   "White castling position against black without pawns " should " give castling allowed for both queen side" in {
     val board: Board = new FENParser().parseFENDescriptiontToBoard("rnbqkbnr/8/8/8/8/8/P6P/R3K2R w KQkq - 0 1")
-    assert(BoardTestHelper.compareUnnormalizedLists(board.getAllMoves() ,WHITE_CASTLING_AND_ROOK_AND_R_PAWNS))
+    assert(BoardTestHelper.compareUnnormalizedLists(board.getAllMoves() ,WHITE_SHORT_CASTLING_AND_ROOK_AND_R_PAWNS))
   }
 
   "Black castling position " should " give castling allowed for both sides" in {
@@ -496,7 +512,7 @@ class BoardTest extends FlatSpec{
 
   "White castling position but king might be attacked " should "  give no castling moves" in {
     val board: Board = new FENParser().parseFENDescriptiontToBoard("2rqkr2/8/8/8/8/8/P6P/R3K2R w KQkq - 0 1")
-    val blackMoves: List[Move] = board.getAllBlackMoves().reduce(_ ::: _)
+    val blackMoves: List[Move] = board.getAllBlackMoves().flatten
     val fieldsAttackedByBlack : List[Int] = blackMoves.groupBy(_.to).map(_._2.head).map(_.to).toList
     val old : BoardSpecialEvents = board.getBoardSpecialEvents()
 //    board.setBoardSpecialEvents()
@@ -517,7 +533,7 @@ class BoardTest extends FlatSpec{
         blackContext.isLongCastlingAllowedForWhite,blackContext.isShortCastlingAllowedForBlack,
         blackContext.isLongCastlingAllowedForBlack,0)
     )
-    val blackMoves: List[Move] = boardWithProperContext.getAllBlackMoves().reduce(_ ::: _)
+    val blackMoves: List[Move] = boardWithProperContext.getAllBlackMoves().flatten
     val fieldsAttackedByBlack : List[Int] = blackMoves.groupBy(_.to).map(_._2.head).map(_.to).toList
     val old : BoardSpecialEvents = board.getBoardSpecialEvents()
     //    board.setBoardSpecialEvents()
@@ -543,10 +559,10 @@ class BoardTest extends FlatSpec{
     assert(allPossibleBoards.size == 20)
   }
 
-  "pawn promotion " should " generate 4 new positions " in {
-    val board: Board = new FENParser().parseFENDescriptiontToBoard("8/7P/8/8/8/8/8/8 w - 0 0 1")
+  "pawn promotion " should " generate 9 new positions " in {
+    val board: Board = new FENParser().parseFENDescriptiontToBoard("8/7P/8/8/8/7K/k7/8 w - 0 0 1")
     val allPossibleBoards : List[Board] = board.generateAllReachableBoards()
-    assert(allPossibleBoards.size == 4)
+    assert(allPossibleBoards.size == 9)
   }
 
  "White castling position " should " should give 16 new positions" in {
@@ -556,15 +572,24 @@ class BoardTest extends FlatSpec{
     assert(allPossibleBoards.size == 16)
   }
 
-  "White pawn attack " should " should give 3 new positions" in {
-    val board: Board = new FENParser().parseFENDescriptiontToBoard("8/2p1p3/3P4/8/8/8/8/8 w - 0 0 1")
+  "White pawn attack " should " should give 8 new positions" in {
+    val board: Board = new FENParser().parseFENDescriptiontToBoard("8/2p1p3/3P4/8/8/8/K6k/8 w - 0 0 1")
     val allPossibleBoards : List[Board] = board.generateAllReachableBoards()
-//    for(oneBoard <- allPossibleBoards) BoardTestHelper.printBoard(oneBoard)
-
-    assert(allPossibleBoards.size == 3)
+    assert(allPossibleBoards.size == 8)
   }
 
+  "position after move Xk " should " be like " in {
+    val initialPosition: Board = new FENParser().parseFENDescriptiontToBoard("8/8/8/8/2K5/7R/1k5R/8 w - 43 0 1")
+    BoardTestHelper.printBoard(initialPosition)
+    val newBoard: Board = initialPosition.generateBoardAfterMove(new Move(15, 9, PieceType.ROOK, PieceType.ROOK))
+    BoardTestHelper.printBoard(newBoard)
+  }
 
-
+  "in this position black king " should " be attacked " in {
+     val board: Board = new FENParser().parseFENDescriptiontToBoard("k7/1P6/1K6/8/8/6B1/5p2/8 b - 43 0 1")
+     BoardTestHelper.printBoard(board)
+     assert(board.isBlackKingAttacked())
+  }
+  
 
 }

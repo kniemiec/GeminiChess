@@ -45,7 +45,7 @@ class BoardSpecialEvents(val colorToMove: Int,
   }
 
   private def enPassangAfterMove(move: Move, color: Int):Int = {
-    if(move.what == PieceType.PAWN){
+    if(move.what == PieceType.PAWN || move.what == PieceType.BLACK_PAWN){
       if(color == 0){
         if(move.to - move.from == 16 ) move.to - 8
         else 0
